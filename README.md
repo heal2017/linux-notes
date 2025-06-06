@@ -810,6 +810,121 @@ route del -net 192.168.2.0/24 gw 10.0.0.254 dev enp0s3
 ip route 192.168.2.0/24 via 10.0.0.254 dev enp0s3
 ```
 
+## docker
+
+### 网站
+
+[官方网站](https://www.docker.com)
+[官方镜像仓库网站](https://hub.docker.com)
+
+### 安装
+
+```shell
+# 卸载原始docker
+yum remove docker*
+# 安装docker
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+yum install docker-ce
+# yum禁用subscription-manager插件
+vim /etc/yum/pluginconf.d/subscription-manager.conf
+```
+
+### 添加源
+
+```shell
+sudo mkdir -p /etc/docker
+sudo tee /etc/docker/daemon.json <<- 'EOF'
+{
+    "registry-mirrors": [
+        "https://hub-mirror.c.163.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://docker.m.daocloud.io",
+        "https://docker.1panel.live",
+        "https://registry.docker-cn.com"
+    ],
+    "dns": [
+        "8.8.8.8",
+        "8.8.4.4"
+    ]
+}
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+```
+
+### 代理
+```shell
+mkdir -p /etc/systemd/system/docker.service.d
+sudo tee /etc/systemd/system/docker.service.d/http-proxy.conf <<- 'EOF'
+[Service]
+Environment="HTTPS_PROXY=https://127.0.0.1:7890"
+Environment="HTTP_PROXY=http://127.0.0.1:7890"
+Environment="NO_PROXY=localhost,127.0.0.1,::1"
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+```
+
+### 常用命令
+
+```shell
+
+# 查看docker信息
+docker version
+docker info
+docker system df
+
+# 安装镜像
+docker search redis
+docker pull redis
+
+# 查看本地镜像
+docker images
+
+# 启动容器
+docker run -it redis -p 8080:80 -name redis1 /bin/bash
+# 查看运行的容器
+docker ps
+# 查看所有容器
+docker ps -a
+# 查看容器log
+docker logs 容器id
+# attach到容器
+docker exec -it 容器id /bin/bash
+docker attach 容器id
+
+# 删除镜像
+docker rmi redis
+
+# 删除所有镜像
+docker rmi -f $(docker images -qa)
+
+# 清理
+docker system prune
+
+# 清理未使用的docker网络
+docker network prune
+
+# 清理未使用的docker容器
+docker container prune
+
+# 清理未使用的volume
+docker volume prune
+
+# 打包容器
+docker export 容器id > package.tar
+# 打包镜像
+docker save -o package.tar REPOSITORY:TAG
+
+# 导入包为本地镜像
+docker load -i package.tar
+
+# 根据image id 定义REPOSITORY和TAG
+docker tag 镜像id REPOSITORY:TAG
+```
+
 # install/unistall
 
 ## unistall no use apps
