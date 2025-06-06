@@ -925,6 +925,63 @@ docker load -i package.tar
 docker tag 镜像id REPOSITORY:TAG
 ```
 
+### 安装mssql
+```bash
+yum install ./*.rpm
+```
+
+### 配置mssql
+```bash
+# 开发版本2，配置密码
+/opt/mssql/bin/mssql-server setup
+# 启动服务，开机启动
+systemctl start mssql-server
+systemctl enable mssql-server
+```
+
+### 登录
+```bash
+sqlcmd -S localhost -U sa -P 'Aa123456'
+select name,filename from sysdatabases
+go
+select name from sysobjects where xtype='u'
+go
+select name from sys.sysusers
+go
+create database db
+go
+use db
+go
+create table info(code char(10) not null,name char(20),primary key(code))
+go
+drop database db
+go
+
+mkdir mssql-backup
+chown -R mssql:mssql mssql-backup
+chmod -R 705 mssql-backup
+# 登陆
+backup database db to disk='/nasal-backup/db.20231015'
+go
+# 创建用户
+create login zq with password = 'Aa123456'
+go
+use db
+go
+create user zq for login zq
+go
+alter role db_datareader add member db
+go
+alter role db_datawriter add member db
+go
+# 修改大小
+after table CAM.dbo.checkform_info alter COLUMN note VARCHAR(2048)
+go
+# 删除用户
+drop user zq
+```
+
+
 # install/unistall
 
 ## unistall no use apps
