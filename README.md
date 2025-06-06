@@ -981,6 +981,70 @@ go
 drop user zq
 ```
 
+## git
+
+### user config
+``` shell
+# 配置用户/邮箱
+git config --global user.name "xxx"
+git config --global user.email "xxx@xxx.xxx"
+# push只需输入一次token/密码
+git config --global credential.helper cache
+# 查看配置
+git config --global --list
+cat ~/.gitconfig
+```
+
+### common commands
+```shell
+# 创建工作目录
+mkdir git-work
+cd git-work
+# 初始化生成.git
+git init
+vim startup.sh
+git add .
+git commit -m "v1.0"
+git status
+git log
+git log --oneline
+git log --decorate
+git reflog
+# 回退版本
+git reset --hard HEAD^
+git reset --hard HEAD^^
+git reset --hard 72c51c3
+# 加标签
+git tag -a 标签名
+git tag -a 标签名 141e3f4
+# 查看当前分支
+git branch
+# 创建分支
+git branch b1
+# 切换分支
+git checkout b1
+# 创建并切换分支
+git checkout -b b1
+# 重命名当前branch
+git branch -M b01
+# 合并分支到当前分支
+git merge master
+# 删除分支
+git branch -d b1
+```
+
+### 远程仓库
+```shell
+# 为远程仓库定义别名
+git remote add origin https://gitee.com/xxx/xxx.git
+# 查看所有别名
+git remote
+git remote -v
+# push本地仓库的b1分支到远程的b1分支
+git push origin b1
+# pull远程仓库的b1分支到本地的b1分支
+git pull origin b1
+```
 
 # install/unistall
 
